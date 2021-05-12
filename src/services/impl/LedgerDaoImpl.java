@@ -66,7 +66,8 @@ public class LedgerDaoImpl implements LedgerDao {
             m.put(i , m.getOrDefault(i, 0) + k);
         }
         keyToEMIToRemainingEMIS.put(key, m);
-        emiDetails.get(request.getEmiPaid()-1).setLumpum(request.getLumpsum());
+
+        emiDetails.get(request.getEmiPaid()).setLumpum(request.getLumpsum());
     }
 
     @Override
@@ -74,8 +75,11 @@ public class LedgerDaoImpl implements LedgerDao {
         String key = createKey(request);
         List<EMIDetail> emiDetails = keyToEmiDetails.get(key);
         int amount = 0;
-        for(int i = 1 ; i <= request.getEmiPaid(); i++){
-            amount = amount + emiDetails.get(i-1).getEmiAmount() + emiDetails.get(i-1).getLumpum();
+        for(int i = 0 ; i <= request.getEmiPaid(); i++){
+            if(i == 0 )
+                amount = amount + emiDetails.get(i).getLumpum();
+            else
+                amount = amount + emiDetails.get(i-1).getEmiAmount() + emiDetails.get(i).getLumpum();
             //System.out.println(amount);
         }
         Map<Integer, Integer> m = keyToEMIToRemainingEMIS.getOrDefault(key, new HashMap<>());
